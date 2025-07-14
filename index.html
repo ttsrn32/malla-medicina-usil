@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Malla Medicina USIL</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f6f6f6;
+      margin: 0;
+      padding: 2rem;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 1rem;
+    }
+    .ciclo {
+      margin: 1rem 0;
+      padding: 1rem;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .ciclo h2 {
+      margin-top: 0;
+    }
+    .curso {
+      display: inline-block;
+      padding: 0.5rem;
+      margin: 0.5rem;
+      border-radius: 8px;
+      background-color: #1119e1; /* Bloqueado por defecto */
+      color: white;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .curso:hover {
+      transform: scale(1.05);
+    }
+    .curso.completado {
+      background-color: #907761 !important;
+    }
+    .curso.desbloqueado {
+      background-color: #c7b691 !important;
+    }
+  </style>
+</head>
+<body>
+  <h1>Malla Medicina USIL</h1>
+  <div id="contenedor"></div>
+
+  <script>
+    const cursos = [
+      { nombre: "Atención integral", ciclo: 1 },
+      { nombre: "Desarrollo humano", ciclo: 1 },
+      { nombre: "English I", ciclo: 1 },
+      { nombre: "Fundamentos de la promoción de salud", ciclo: 1 },
+      { nombre: "Integración de estructura y función del organismo humano", ciclo: 1 },
+      { nombre: "Lenguaje I", ciclo: 1 },
+      { nombre: "English II", ciclo: 2, prereq: ["English I"] },
+      { nombre: "Integración morfofuncional del sistema nervioso", ciclo: 2, prereq: ["Integración de estructura y función del organismo humano"] },
+      { nombre: "Lenguaje II", ciclo: 2, prereq: ["Lenguaje I"] },
+      { nombre: "Pensamiento matemático", ciclo: 2 },
+      { nombre: "Procesos químico-biológicos y nutrición", ciclo: 2, prereq: ["Atención integral"] },
+      { nombre: "Práctica y profesionalismo médico I", ciclo: 2 },
+      { nombre: "Bioestadística", ciclo: 3, prereq: ["Pensamiento matemático"] },
+      { nombre: "Bioquímica y biología molecular", ciclo: 3, prereq: ["Procesos químico-biológicos y nutrición"] },
+      { nombre: "English III", ciclo: 3, prereq: ["English II"] },
+      { nombre: "Integración morfofuncional del sistema cardio-circulatorio", ciclo: 3, prereq: ["Integración morfofuncional del sistema nervioso"] },
+      { nombre: "Integración morfofuncional del sistema respiratorio", ciclo: 3, prereq: ["Integración morfofuncional del sistema nervioso"] },
+      { nombre: "Nutrición y estilos de vida saludable", ciclo: 3, prereq: ["Procesos químico-biológicos y nutrición"] },
+      { nombre: "Práctica y profesionalismo médico II", ciclo: 3, prereq: ["Práctica y profesionalismo médico I"] },
+      // Agrega aquí el resto de cursos siguiendo el mismo formato...
+    ];
+
+    const estadoCursos = JSON.parse(localStorage.getItem("estadoCursos")) || {};
+
+    function actualizarEstado(nombre) {
+      estadoCursos[nombre] = !estadoCursos[nombre];
+      localStorage.setItem("estadoCursos", JSON.stringify(estadoCursos));
+      render();
+    }
+
+    function desbloqueado(curso) {
+      if (!curso.prereq) return true;
+      return curso.prereq.every(pr => estadoCursos[pr]);
+    }
+
+    function render() {
+      const contenedor = document.getElementById("contenedor");
+      contenedor.innerHTML = "";
+      const porCiclo = {};
+      cursos.forEach(curso => {
+        if (!porCiclo[curso.ciclo]) porCiclo[curso.ciclo] = [];
+        porCiclo[curso.ciclo].push(curso);
+      });
+
+      Object.keys(porCiclo).sort((a, b) => a - b).forEach(ciclo => {
+        const divCiclo = document.createElement("div");
+        divCiclo.className = "ciclo";
+        const titulo = document.createElement("h2");
+        titulo.textContent = `Ciclo ${ciclo}`;
+        divCiclo.appendChild(titulo);
+
+        porCiclo[ciclo].forEach(curso => {
+          const divCurso = document.createElement("div");
+          divCurso.className = "curso";
+          divCurso.textContent = curso.nombre;
+          if (estadoCursos[curso.nombre]) {
+            divCurso.classList.add("completado");
+          } else if (desbloqueado(curso)) {
+            divCurso.classList.add("desbloqueado");
+          }
+          divCurso.onclick = () => actualizarEstado(curso.nombre);
+          divCiclo.appendChild(divCurso);
+        });
+
+        contenedor.appendChild(divCiclo);
+      });
+    }
+
+    render();
+  </script>
+</body>
+</html>
