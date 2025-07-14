@@ -27,11 +27,11 @@
       margin-top: 0;
     }
     .curso {
-      display: inline-block;
+      display: block;
       padding: 0.5rem;
-      margin: 0.5rem;
+      margin: 0.5rem 0;
       border-radius: 8px;
-      background-color: #1119e1; /* Bloqueado por defecto */
+      background-color: #c7b69f; /* Bloqueado por defecto */
       color: white;
       cursor: pointer;
       transition: transform 0.2s;
@@ -43,7 +43,7 @@
       background-color: #907761 !important;
     }
     .curso.desbloqueado {
-      background-color: #c7b691 !important;
+      background-color: #ab9680 !important;
     }
   </style>
 </head>
@@ -72,7 +72,7 @@
       { nombre: "Integración morfofuncional del sistema respiratorio", ciclo: 3, prereq: ["Integración morfofuncional del sistema nervioso"] },
       { nombre: "Nutrición y estilos de vida saludable", ciclo: 3, prereq: ["Procesos químico-biológicos y nutrición"] },
       { nombre: "Práctica y profesionalismo médico II", ciclo: 3, prereq: ["Práctica y profesionalismo médico I"] },
-      // Agrega aquí el resto de cursos siguiendo el mismo formato...
+      { nombre: "English IV", ciclo: 4, prereq: ["English III"] },
     ];
 
     const estadoCursos = JSON.parse(localStorage.getItem("estadoCursos")) || {};
